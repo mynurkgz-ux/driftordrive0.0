@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "rooms": {
+      "$room": {
+        ".read": true,
+        "info": { ".write": true },
+        "players": {
+          "$pid": { ".write": true }
+        }
+      }
+    }
+  }
+}

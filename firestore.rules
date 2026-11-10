@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Профиль и сохранение игрока — только владелец
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    // Комнаты мультиплеера — открыты (вход по ссылке без регистрации)
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['mode', 'map', 'host', 'state'])
+                    && request.resource.data.mode in ['drift', 'race'];
+      allow update: if request.resource.data.mode == resource.data.mode
+                    && request.resource.data.host == resource.data.host;
+      allow delete: if false;
+      match /players/{pid} {
+        allow read, write: if true;
+      }
+    }
+  }
+}
